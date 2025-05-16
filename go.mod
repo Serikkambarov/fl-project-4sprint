@@ -1,4 +1,4 @@
-module github.com/Yandex-Practicum/tracker
+module github.com/SerikKambarov/fl-project-4sprint
 
 go 1.24.1
 

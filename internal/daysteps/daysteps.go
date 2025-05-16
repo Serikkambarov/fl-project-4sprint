@@ -1,11 +1,12 @@
 package daysteps
 
 import (
-	"time"
 	"fmt"
 	"strconv"
 	"strings"
-	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
+	"time"
+
+	"github.com/SerikKambarov/fl-project-4sprint/internal/spentcalories"
 )
 
 const (
@@ -13,7 +14,6 @@ const (
 	stepLength = 0.65
 	// Количество метров в одном километре
 	mInKm = 1000
-	
 )
 
 func parsePackage(data string) (int, time.Duration, error) {
@@ -68,11 +68,11 @@ func DayActionInfo(data string, weight, height float64) string {
 	// 4. Перевести в километры
 	distanceKm := distanceMeters / mInKm
 	// 5. Посчитать калории
-	calories, err :=spentcalories.WalkingSpentCalories(steps, weight, height, duration)
-		if err != nil {
+	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
+	if err != nil {
 		fmt.Println("Ошибка:", err)
-			return ""
-		}
+		return ""
+	}
 
 	// 6. Сформировать строку
 	result := fmt.Sprintf(
