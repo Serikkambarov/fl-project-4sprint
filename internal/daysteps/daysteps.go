@@ -1,12 +1,12 @@
 package daysteps
 
 import (
+	"time"
+	"log"
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
-
-	"github.com/SerikKambarov/fl-project-4sprint/internal/spentcalories"
+	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
 )
 
 const (
@@ -14,6 +14,7 @@ const (
 	stepLength = 0.65
 	// Количество метров в одном километре
 	mInKm = 1000
+	
 )
 
 func parsePackage(data string) (int, time.Duration, error) {
@@ -27,7 +28,7 @@ func parsePackage(data string) (int, time.Duration, error) {
 	}
 
 	// 3. Преобразовать первый элемент в int (кол-во шагов)
-	stepsStr := strings.TrimSpace(parts[0])
+	stepsStr := parts[0]
 	steps, err := strconv.Atoi(stepsStr)
 	if err != nil {
 		return 0, 0, fmt.Errorf("ошибка преобразования шагов: %v", err)
@@ -44,41 +45,39 @@ func parsePackage(data string) (int, time.Duration, error) {
 	if err != nil {
 		return 0, 0, fmt.Errorf("ошибка преобразования длительности: %v", err)
 	}
+	if duration <= 0 {
+	return 0, 0, fmt.Errorf("длительность должна быть положительной, получено: %v", duration)
+	}
 
 	// 6. Вернуть результат, если всё прошло успешно
 	return steps, duration, nil
 }
 
 func DayActionInfo(data string, weight, height float64) string {
-	// TODO: реализовать функцию
-	// 1. Получить шаги и длительность
 	steps, duration, err := parsePackage(data)
-
 	if err != nil {
-		fmt.Println("Ошибка:", err)
-		return ""
-	}
-	// 2. Проверить количество шагов
-	if steps <= 0 {
+		log.Println("Ошибка:", err) // ← логируем правильно
 		return ""
 	}
 
-	// 3. Вычислить дистанцию в метрах
+	if steps <= 0 {
+		log.Println("Ошибка: количество шагов должно быть положительным")
+		return ""
+	}
+
 	distanceMeters := float64(steps) * stepLength
-	// 4. Перевести в километры
 	distanceKm := distanceMeters / mInKm
-	// 5. Посчитать калории
+
 	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 	if err != nil {
-		fmt.Println("Ошибка:", err)
+		log.Println("Ошибка:", err)
 		return ""
 	}
 
-	// 6. Сформировать строку
 	result := fmt.Sprintf(
-		"Вы прошли %.2f км за %v и сожгли %.2f ккал.",
+		"Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.\n",
+		steps,
 		distanceKm,
-		duration.Round(time.Second), // округляем до секунд
 		calories,
 	)
 	return result

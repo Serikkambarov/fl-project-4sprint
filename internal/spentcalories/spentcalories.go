@@ -1,11 +1,11 @@
 package spentcalories
 
 import (
-	"time"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Основные константы, необходимые для расчетов.
@@ -31,6 +31,10 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	if err != nil {
 		return 0, "", 0, fmt.Errorf("ошибка преобразования шагов: %v", err)
 	}
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("шаги должны быть положительным числом, получено: %d", steps)
+	}
+	
 	// 4. Извлечь вид активности
 	activity := strings.TrimSpace(parts[1])
 
@@ -40,6 +44,9 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	if err != nil {
 		return 0, "", 0, fmt.Errorf("ошибка преобразования длительности: %v", err)
 	}
+	if duration <= 0 {
+    return 0, "", 0, fmt.Errorf("длительность должна быть положительной, получено: %v", duration)
+}
 
 	return steps, activity, duration, nil
 }
@@ -110,9 +117,9 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	}
 
 	// 3. Формирование строки результата
-	result := fmt.Sprintf("Тип: %s; Длительность: %.0f мин; Расстояние: %.2f км; Ср. скорость: %.2f км/ч; Калории: %.2f",
+	result := fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 		activity,
-		duration.Minutes(),
+		duration.Hours(),
 		dist,
 		speed,
 		cal,
@@ -176,6 +183,6 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 
 	// 5. Умножение на поправочный коэффициент
 	adjustedCalories := calories * walkingCaloriesCoefficient
-		
-		return adjustedCalories, nil
+
+	return adjustedCalories, nil
 }
